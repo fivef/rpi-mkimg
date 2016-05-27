@@ -3,6 +3,8 @@ if [[ $EUID -ne 0 ]]; then
   echo "ERROR: You are not root" 2>&1
   exit 1
 else
+    # Specify dependencies
+    declare -a depends=("parted" "zip", "fdisk", "e2fsck", "resize2fs", "sed", "dd")
     
     device=$1
     outfile=$2
@@ -18,33 +20,25 @@ else
         exit 1;
     fi;
     
-    echo Testing dependency \"parted\"...
-    if [ $(dpkg-query -W -f='${Status}' parted 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-        echo "Not installed. Installing parted..."
-        apt-get --force-yes --yes install parted
-        if [ $(dpkg-query -W -f='${Status}' parted 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-          echo "Installation of parted failed. Please install it manually and run this script again."
-          exit 1;
-        else
-          echo "parted was successfully installed."
-        fi
-    else
-      echo "parted is installed. Proceeding."
-    fi
+    # Check for, install, and verify dependencies
+    for i in "${depends[@]}"
+      do
+          echo Testing dependency \"$i\"...
+          if [ $(dpkg-query -W -f='${Status}' $i 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+              echo "Not installed. Installing $i..."
+              apt-get --force-yes --yes install $i
+              if [ $(dpkg-query -W -f='${Status}' $i 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+                echo "Installation of $i failed. Please install it manually and run this script again."
+                exit 1;
+              else
+                echo "$i was successfully installed."
+              fi
+          else
+            echo "$i is installed. Proceeding."
+          fi
+      done
     
-    echo Testing dependency \"zip\"...
-    if [ $(dpkg-query -W -f='${Status}' zip 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-        echo "Not installed. Installing zip..."
-        apt-get --force-yes --yes install zip
-        if [ $(dpkg-query -W -f='${Status}' zip 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-          echo "Installation of zip failed. Please install it manually and run this script again."
-          exit 1;
-        else
-          echo "zip was successfully installed."
-        fi
-    else
-      echo "zip is installed. Proceeding."
-    fi
+
     
     # sanity checks on the partition layout
     fdisk -l ${device} | grep -q "${device}1.*W95 FAT32"
