@@ -25,7 +25,7 @@ else
       PACMAN="$(command -v yum) --y install "
     fi
     if [ $(command -v apt-get) ]; then
-      PACMAN="$(command -v apt-get) --force-yes --yes install "
+      PACMAN="$(command -v apt-get) --allow-unauthenticated --yes install "
     fi
 
     for i in "${depends[@]}"
