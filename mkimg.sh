@@ -21,13 +21,20 @@ else
     fi;
     
     # Check for, install, and verify dependencies
+    if [ $(command -v yum) ]; then
+      PACMAN="$(command -v yum) --y install "
+    fi
+    if [ $(command -v apt-get) ]; then
+      PACMAN="$(command -v apt-get) --force-yes --yes install "
+    fi
+
     for i in "${depends[@]}"
       do
           echo Testing dependency \"$i\"...
-          if [ $(dpkg-query -W -f='${Status}' $i 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+          if [ $(dpkg-query -W -f='${Status}' $i 2>/dev/null | grep -c "ok installed") -eq 0 ] && [ $(rpm -qa | grep -c $i) -eq 0 ]; then
               echo "Not installed. Installing $i..."
-              apt-get --force-yes --yes install $i
-              if [ $(dpkg-query -W -f='${Status}' $i 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+              $PACMAN $i
+              if [ $(dpkg-query -W -f='${Status}' $i 2>/dev/null | grep -c "ok installed") -eq 0 ] && [ $(rpm -qa | grep -c $i) -eq 0 ]; then
                 echo "Installation of $i failed. Please install it manually and run this script again."
                 exit 1;
               else
