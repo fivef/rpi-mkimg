@@ -18,18 +18,32 @@ else
         exit 1;
     fi;
     
-    testparted=$(dpkg-query -W --showformat='${Status}\n' parted | grep "install ok")
-    echo Testing dependency \"parted\": $testparted
-    if [ "" == "$testparted" ]; then
+    echo Testing dependency \"parted\"...
+    if [ $(dpkg-query -W -f='${Status}' parted 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
         echo "Not installed. Installing parted..."
         apt-get --force-yes --yes install parted
-        testparted=$(dpkg-query -W --showformat='${Status}\n' parted | grep "install ok")
-        if [ "" == "$testparted" ]; then
+        if [ $(dpkg-query -W -f='${Status}' parted 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
           echo "Installation of parted failed. Please install it manually and run this script again."
           exit 1;
         else
           echo "parted was successfully installed."
         fi
+    else
+      echo "parted is installed. Proceeding."
+    fi
+    
+    echo Testing dependency \"zip\"...
+    if [ $(dpkg-query -W -f='${Status}' zip 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+        echo "Not installed. Installing zip..."
+        apt-get --force-yes --yes install zip
+        if [ $(dpkg-query -W -f='${Status}' zip 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+          echo "Installation of zip failed. Please install it manually and run this script again."
+          exit 1;
+        else
+          echo "zip was successfully installed."
+        fi
+    else
+      echo "zip is installed. Proceeding."
     fi
     
     # sanity checks on the partition layout
