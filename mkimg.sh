@@ -31,10 +31,10 @@ else
     for i in "${depends[@]}"
       do
           echo Testing dependency \"$i\"...
-          if [ $(dpkg-query -W -f='${Status}' $i 2>/dev/null | grep -c "ok installed") -eq 0 ] && [ $(rpm -qa | grep -c $i) -eq 0 ]; then
+          if [ $(dpkg-query -W -f='${Status}' $i 2>/dev/null | grep -c "ok installed") -eq 0 ] && [ $(rpm -qa 2>/dev/null | grep -c $i) -eq 0 ]; then
               echo "Not installed. Installing $i..."
               $PACMAN $i
-              if [ $(dpkg-query -W -f='${Status}' $i 2>/dev/null | grep -c "ok installed") -eq 0 ] && [ $(rpm -qa | grep -c $i) -eq 0 ]; then
+              if [ $(dpkg-query -W -f='${Status}' $i 2>/dev/null | grep -c "ok installed") -eq 0 ] && [ $(rpm -qa 2>/dev/null | grep -c $i) -eq 0 ]; then
                 echo "Installation of $i failed. Please install it manually and run this script again."
                 exit 1;
               else
