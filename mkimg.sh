@@ -86,7 +86,7 @@ else
     
     # call resize2fs to shrink the partition down to the minimum size it needs to be.
     # parse the output to know how big the partition is in bytes
-    let bytes=`resize2fs -M ${linux_partition} 2>&1 | grep -i -e "The filesystem .*is .*blocks long" | sed -e 's/.*is [^ ]* \([0-9]*\) (4k) blocks.*/\1*4096/'`
+    let bytes=`resize2fs -M ${linux_partition} 2>&1 | grep -i -e "The filesystem .*is .*blocks long" | sed -e 's/.*is [^ ]* \([0-9]*\).* blocks.*/\1*4096/'
     
     # convert the value in bytes returned by resize2fs to MB
     let megs_rounded=`convert_bytes ${bytes}`
