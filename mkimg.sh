@@ -4,7 +4,7 @@ if [[ $EUID -ne 0 ]]; then
   exit 1
 else
     # Specify dependencies
-    declare -a depends=("parted" "zip" "fdisk" "e2fsck" "resize2fs" "sed" "dd")
+    declare -a depends=("parted" "zip")
     
     device=$1
     outfile=$2
