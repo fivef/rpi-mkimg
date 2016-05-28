@@ -48,7 +48,7 @@ else
 
     
     # sanity checks on the partition layout
-    if [ $(fdisk -l ${device} | grep -q "${device}1.*W95 FAT16") -eq 0 ] || [ $(fdisk -l ${device} | grep -q "${device}1.*W95 FAT32") -eq 0 ]; then
+    if [ $(fdisk -l ${device} | grep -c "${device}1.*W95 FAT16") -eq 0 ] || [ $(fdisk -l ${device} | grep -c "${device}1.*W95 FAT32") -eq 0 ]; then
         echo 'The first partition is expected to be FAT16 or FAT32' 1>&1;
         exit 1;
     fi;
