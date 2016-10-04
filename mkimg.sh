@@ -80,6 +80,8 @@ else
     
     # do not continue of there are errors
     set -e
+
+    echo 'Please wait until you get the "successfully backed up" message!' 1>&1;
     
     e2fsck -f ${linux_partition}
     
@@ -125,5 +127,7 @@ else
     
     # if the linux partition didn't show up, this will fail
     resize2fs ${linux_partition}
+
+    echo 'The sd card was successfully backed up!' 1>&1;
 
 fi
